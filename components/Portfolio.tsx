@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import {
   motion,
@@ -29,127 +30,75 @@ type Project = {
   tech: string[];
   cards: ProjectCard[];
   variant: "grid" | "gallery";
+  previewImage?: string;
   galleryLabel?: string;
   galleryGradient?: string;
 };
 
 const projects: Project[] = [
   {
-    id: "luma",
-    name: "Luma Studio",
+    id: "faria-oliveira",
+    name: "Faria Oliveira Advocacia",
     year: "2026",
-    type: "Website",
+    type: "Site Institucional",
     location: "Belo Horizonte — MG",
-    url: "https://erickgabriel.dev/portfolio/luma-studio",
-    headline: "Built for different industries and",
-    highlight: "growth stages",
+    url: "https://faroliadv.com.br/",
+    previewImage: "/projects/faria-oliveira.png",
+    headline: "Estratégia jurídica para",
+    highlight: "reestruturação financeira",
     description:
-      "Website institucional premium para estúdio de branding com animações fluidas, CMS e performance otimizada para conversão.",
-    tech: ["Next.js", "Framer Motion", "Sanity"],
-    cards: [
-      {
-        title: "Multi-entity and complex financial structures.",
-        detail:
-          "Arquitetura de conteúdo modular para marcas com múltiplas frentes de negócio.",
-      },
-      {
-        title: "Early-stage service businesses building structure.",
-        detail:
-          "Landing sections dinâmicas com foco em autoridade e geração de leads.",
-      },
-      {
-        title: "High-growth companies scaling operations.",
-        detail:
-          "Microinterações e transições que reforçam percepção premium da marca.",
-      },
-      {
-        title: "International groups with local presence.",
-        detail:
-          "SEO técnico, acessibilidade e Lighthouse 95+ em todas as páginas.",
-      },
-    ],
-    variant: "grid",
-  },
-  {
-    id: "nova",
-    name: "Nova Imóveis",
-    year: "2025",
-    type: "Website",
-    location: "São Paulo — SP",
-    url: "https://erickgabriel.dev/portfolio/nova-imoveis",
-    headline: "Cada detalhe pensado para você",
-    highlight: "morar agora",
-    description:
-      "Site imobiliário com busca dinâmica de imóveis, vitrine visual e painel para corretores integrado ao CRM.",
-    tech: ["Next.js", "Supabase", "Maps API"],
+      "Site institucional para escritório especializado em reestruturação de dívidas, gestão de passivo bancário e negociação estratégica com instituições financeiras.",
+    tech: ["WordPress", "Elementor", "SEO"],
     cards: [],
     variant: "gallery",
-    galleryLabel: "Imobiliário",
-    galleryGradient: "from-amber-100 via-orange-50 to-stone-200",
   },
   {
-    id: "evolve",
-    name: "Evolve Fit",
+    id: "br-fintech",
+    name: "BR Fintech",
     year: "2025",
-    type: "Landing Page",
-    location: "Curitiba — PR",
-    url: "https://erickgabriel.dev/portfolio/evolve-fit",
-    headline: "Designed for fitness brands and",
-    highlight: "member growth",
+    type: "Site Institucional",
+    location: "Belo Horizonte — MG",
+    url: "https://brfintech.ia.br/",
+    previewImage: "/projects/br-fintech.png",
+    headline: "Gestão financeira simples e",
+    highlight: "eficiente",
     description:
-      "Landing de alta conversão para captação de leads em rede de academias com tracking e testes A/B.",
-    tech: ["Next.js", "Tailwind", "GA4"],
-    cards: [
-      {
-        title: "Local gyms expanding digital presence.",
-        detail: "Hero com prova social e formulário otimizado para mobile-first.",
-      },
-      {
-        title: "Franchises needing unified campaigns.",
-        detail: "Componentes reutilizáveis para unidades com identidade centralizada.",
-      },
-      {
-        title: "Premium studios targeting high-ticket plans.",
-        detail: "Visual bold com tipografia forte e CTAs estratégicos.",
-      },
-      {
-        title: "Wellness apps bridging online and offline.",
-        detail: "Integração com WhatsApp e automação de follow-up de leads.",
-      },
-    ],
-    variant: "grid",
+      "Site institucional para fintech com foco em pagamentos, gestão financeira, crédito e integrações via API — posicionando tecnologia, segurança e escalabilidade.",
+    tech: ["WordPress", "Elementor", "SEO"],
+    cards: [],
+    variant: "gallery",
   },
   {
-    id: "atlas",
-    name: "Atlas ERP",
-    year: "2024",
-    type: "Sistema",
-    location: "Remoto — BR",
-    url: "https://erickgabriel.dev/portfolio/atlas-erp",
-    headline: "Built for operations teams and",
-    highlight: "real-time data",
+    id: "bc-advogados",
+    name: "BC Advogados",
+    year: "2025",
+    type: "Site Institucional",
+    location: "Belo Horizonte — MG",
+    url: "https://www.bcadvogados.adv.br/",
+    previewImage: "/projects/bc-advogados.png",
+    headline: "Consultoria jurídica planejativa",
+    highlight: "em todo o Brasil",
     description:
-      "Sistema interno para gestão financeira, estoque e relatórios em tempo real com dashboards personalizados.",
-    tech: ["Next.js", "Node.js", "PostgreSQL"],
-    cards: [
-      {
-        title: "Finance teams tracking cash flow daily.",
-        detail: "Painéis com filtros avançados e exportação de relatórios.",
-      },
-      {
-        title: "Inventory-heavy businesses reducing waste.",
-        detail: "Alertas automáticos e visão consolidada de estoque.",
-      },
-      {
-        title: "Managers needing executive summaries.",
-        detail: "KPIs em tempo real com permissões por perfil de usuário.",
-      },
-      {
-        title: "Growing teams requiring scalable access.",
-        detail: "Autenticação, logs de auditoria e APIs para integrações.",
-      },
-    ],
-    variant: "grid",
+      "Site institucional para escritório com mais de 20 anos de atuação, destacando áreas de prática, presença nacional e autoridade técnica em direito empresarial e tributário.",
+    tech: ["WordPress", "Elementor", "SEO"],
+    cards: [],
+    variant: "gallery",
+  },
+  {
+    id: "bc-consultores",
+    name: "BC Consultores",
+    year: "2025",
+    type: "Site Institucional",
+    location: "Belo Horizonte — MG",
+    url: "https://bcconsultores.adv.br/",
+    previewImage: "/projects/bc-consultores.png",
+    headline: "Assessoria contábil com",
+    highlight: "atendimento humanizado",
+    description:
+      "Site institucional para escritório contábil com serviços fiscais, trabalhistas e de planejamento tributário — estruturado para conversão e suporte personalizado.",
+    tech: ["WordPress", "Elementor", "SEO"],
+    cards: [],
+    variant: "gallery",
   },
 ];
 
@@ -189,6 +138,21 @@ function GridPreview({ project }: { project: Project }) {
   );
 }
 
+function ImagePreview({ project }: { project: Project }) {
+  if (!project.previewImage) return null;
+
+  return (
+    <Image
+      src={project.previewImage}
+      alt={`Preview do site ${project.name}`}
+      fill
+      className="object-cover object-center"
+      sizes="(max-width: 768px) 88vw, 680px"
+      priority
+    />
+  );
+}
+
 function GalleryPreview({ project }: { project: Project }) {
   return (
     <div
@@ -209,6 +173,64 @@ function GalleryPreview({ project }: { project: Project }) {
   );
 }
 
+const LOADING_BARS = [
+  { color: "var(--accent)", height: "h-5 md:h-6", delay: 0 },
+  { color: "#a78bfa", height: "h-8 md:h-10", delay: 0.2 },
+  { color: "var(--accent-soft)", height: "h-11 md:h-14", delay: 0.4 },
+] as const;
+
+function ComingSoonBars() {
+  return (
+    <div
+      className="mb-8 flex items-end justify-center gap-2 md:mb-10 md:gap-2.5"
+      role="status"
+      aria-label="Carregando novos projetos"
+    >
+      {LOADING_BARS.map((bar) => (
+        <motion.div
+          key={bar.color}
+          className={`w-2.5 origin-bottom rounded-sm md:w-3 ${bar.height}`}
+          style={{ backgroundColor: bar.color }}
+          animate={{ scaleY: [0.35, 1, 0.35] }}
+          transition={{
+            duration: 1.1,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: bar.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ComingSoonSlide({ compact = false }: { compact?: boolean }) {
+  return (
+    <article
+      data-portfolio-slide
+      className={
+        compact
+          ? "flex h-full w-[min(84vw,520px)] shrink-0 items-center justify-center md:w-[min(50vw,580px)]"
+          : "flex w-[min(88vw,640px)] shrink-0 items-center justify-center md:w-[min(58vw,680px)]"
+      }
+    >
+      <div className="flex flex-col items-center px-6 text-center md:px-10">
+        <ComingSoonBars />
+        <h3 className="max-w-[18ch] text-xl font-bold leading-tight tracking-tight text-white sm:max-w-none sm:text-2xl md:text-[1.75rem]">
+          <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+            Novos projetos
+          </span>{" "}
+          serão
+          adicionados em breve.
+        </h3>
+        <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-400 md:mt-5 md:text-base">
+          Calma que ainda não acabou, o site é novo!
+        </p>
+      </div>
+    </article>
+  );
+}
+
 function ProjectCard({
   project,
   compact = false,
@@ -218,6 +240,7 @@ function ProjectCard({
 }) {
   return (
     <article
+      data-portfolio-slide
       className={
         compact
           ? "group/project relative flex h-full w-[min(84vw,520px)] shrink-0 md:w-[min(50vw,580px)]"
@@ -238,7 +261,9 @@ function ProjectCard({
               : "relative aspect-[16/11] overflow-hidden"
           }
         >
-          {project.variant === "grid" ? (
+          {project.previewImage ? (
+            <ImagePreview project={project} />
+          ) : project.variant === "grid" ? (
             <GridPreview project={project} />
           ) : (
             <GalleryPreview project={project} />
@@ -278,7 +303,7 @@ function ProjectCard({
             </div>
           )}
 
-          {project.variant === "gallery" && (
+          {(project.previewImage || project.variant === "gallery") && (
             <div className="absolute inset-0 z-[5] flex items-end bg-violet-600/95 p-6 opacity-0 transition-opacity duration-300 group-hover/project:opacity-100">
               <div>
                 <p className="text-sm font-semibold text-white">
@@ -327,12 +352,15 @@ function smoothstep(t: number) {
   return t * t * (3 - 2 * t);
 }
 
+const PORTFOLIO_ITEM_COUNT = projects.length + 1;
+
 function PortfolioTrack({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? "flex h-full w-max items-stretch gap-5 md:gap-6" : "flex w-max gap-5 md:gap-6"}>
       {projects.map((project) => (
         <ProjectCard key={project.id} project={project} compact={compact} />
       ))}
+      <ComingSoonSlide compact={compact} />
     </div>
   );
 }
@@ -365,8 +393,8 @@ function ScrollDrivenPortfolio() {
     if (!section || !container || !track) return;
 
     const measure = () => {
-      const articles = track.querySelectorAll("article");
-      const offsets = Array.from(articles).map(
+      const slides = track.querySelectorAll("[data-portfolio-slide]");
+      const offsets = Array.from(slides).map(
         (el) => (el as HTMLElement).offsetLeft
       );
       cardOffsetsRef.current = offsets.length > 0 ? offsets : [0];
@@ -412,7 +440,7 @@ function ScrollDrivenPortfolio() {
     };
   }, [scrollProgress]);
 
-  const runwayHeight = `${projects.length * RUNWAY_VH_PER_PROJECT}svh`;
+  const runwayHeight = `${PORTFOLIO_ITEM_COUNT * RUNWAY_VH_PER_PROJECT}svh`;
 
   return (
     <section
