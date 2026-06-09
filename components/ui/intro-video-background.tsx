@@ -4,6 +4,7 @@ import { type MotionValue } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 const VIDEO_SRC = "/intro-background.mp4";
+const POSTER_SRC = "/hero-background-poster.png";
 const SEEK_THRESHOLD = 0.028;
 
 type IntroVideoBackgroundProps = {
@@ -25,8 +26,11 @@ export function IntroVideoBackground({ progress }: IntroVideoBackgroundProps) {
     if (!video) return;
 
     video.muted = true;
+    video.defaultMuted = true;
     video.pause();
     video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
     video.preload = "auto";
 
     const applySeek = () => {
@@ -55,18 +59,37 @@ export function IntroVideoBackground({ progress }: IntroVideoBackgroundProps) {
       queueSeek();
     };
 
+    const unlockMobilePlayback = async () => {
+      const currentVideo = videoRef.current;
+      if (!currentVideo) return;
+
+      try {
+        await currentVideo.play();
+        currentVideo.pause();
+        syncFromProgress(progressRef.current.get());
+      } catch {
+        currentVideo.currentTime = 0;
+      }
+    };
+
     const onMetadata = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return;
       durationRef.current = video.duration;
       readyRef.current = true;
-      syncFromProgress(progressRef.current.get());
+      void unlockMobilePlayback();
     };
 
     const onSeeked = () => {
       applySeek();
     };
 
+    const onLoadedData = () => {
+      if (!readyRef.current) return;
+      syncFromProgress(progressRef.current.get());
+    };
+
     video.addEventListener("loadedmetadata", onMetadata);
+    video.addEventListener("loadeddata", onLoadedData);
     video.addEventListener("seeked", onSeeked);
     if (video.readyState >= 1) onMetadata();
 
@@ -75,6 +98,7 @@ export function IntroVideoBackground({ progress }: IntroVideoBackgroundProps) {
     return () => {
       unsubscribe();
       video.removeEventListener("loadedmetadata", onMetadata);
+      video.removeEventListener("loadeddata", onLoadedData);
       video.removeEventListener("seeked", onSeeked);
     };
   }, [progress]);
@@ -84,6 +108,7 @@ export function IntroVideoBackground({ progress }: IntroVideoBackgroundProps) {
       <video
         ref={videoRef}
         src={VIDEO_SRC}
+        poster={POSTER_SRC}
         muted
         playsInline
         preload="auto"

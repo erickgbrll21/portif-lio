@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import {
   motion,
   useMotionTemplate,
@@ -20,6 +21,10 @@ const VIDEO_END = 0.78;
 const HERO_START = 0.82;
 const HERO_END = 1;
 
+function getViewportHeight() {
+  return window.visualViewport?.height ?? window.innerHeight;
+}
+
 export function Intro() {
   const reducedMotion = useReducedMotion();
   const scrollRef = useRef<HTMLElement>(null);
@@ -37,8 +42,12 @@ export function Intro() {
 
     const updateProgress = () => {
       const rect = section.getBoundingClientRect();
-      const scrollRange = section.offsetHeight - window.innerHeight;
-      if (scrollRange <= 0) return;
+      const scrollRange = section.offsetHeight - getViewportHeight();
+      if (scrollRange <= 0) {
+        scrollProgress.set(0);
+        videoProgress.set(0);
+        return;
+      }
 
       const progress = Math.min(Math.max(-rect.top / scrollRange, 0), 1);
       scrollProgress.set(progress);
@@ -49,11 +58,13 @@ export function Intro() {
     window.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("resize", updateProgress);
     window.visualViewport?.addEventListener("resize", updateProgress);
+    window.visualViewport?.addEventListener("scroll", updateProgress);
 
     return () => {
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("resize", updateProgress);
       window.visualViewport?.removeEventListener("resize", updateProgress);
+      window.visualViewport?.removeEventListener("scroll", updateProgress);
     };
   }, [scrollProgress, videoProgress]);
 
@@ -91,15 +102,17 @@ export function Intro() {
       <section
         id="top"
         ref={scrollRef}
-        className="relative scroll-mt-24 [--intro-runway:320svh] sm:[--intro-runway:310svh] md:[--intro-runway:350svh] xl:[--intro-runway:360svh] 2xl:[--intro-runway:340svh]"
-        style={{
-          height: motionReady && reducedMotion ? "100svh" : "var(--intro-runway)",
-        }}
+        className={clsx(
+          "relative scroll-mt-24",
+          reducedMotion
+            ? "h-[100vh] supports-[height:100svh]:h-[100svh] supports-[height:100dvh]:h-[100dvh]"
+            : "h-[320vh] supports-[height:100svh]:h-[320svh]"
+        )}
         aria-label="Abertura"
       >
-        <div className="sticky top-0 h-[100svh] overflow-hidden supports-[height:100dvh]:h-[100dvh]">
+        <div className="sticky top-14 h-[calc(100vh-3.5rem)] overflow-hidden sm:top-16 sm:h-[calc(100vh-4rem)] supports-[height:100svh]:h-[calc(100svh-3.5rem)] sm:supports-[height:100svh]:h-[calc(100svh-4rem)] supports-[height:100dvh]:h-[calc(100dvh-3.5rem)] sm:supports-[height:100dvh]:h-[calc(100dvh-4rem)]">
           <motion.div
-            className="absolute inset-0 will-change-[filter]"
+            className="absolute inset-0 z-0 will-change-[filter]"
             style={{ filter: videoFilter }}
           >
             <IntroVideoBackground progress={videoProgress} />
@@ -107,7 +120,7 @@ export function Intro() {
 
           <motion.div
             style={{ y: textY, opacity: textOpacity }}
-            className="relative z-10 flex h-full items-center justify-center px-4 pt-20 text-center will-change-transform sm:px-6 md:pt-24"
+            className="relative z-10 flex h-full items-center justify-center px-4 pt-6 text-center will-change-transform sm:px-6 md:pt-10"
           >
             <div className="max-w-[18rem] sm:max-w-none">
               <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 sm:mb-4 sm:text-xs sm:tracking-[0.3em]">
@@ -121,12 +134,13 @@ export function Intro() {
 
           {showCurtainHero && (
             <motion.div
+              initial={{ y: "100%" }}
               style={{
                 y: heroSlideY,
                 borderRadius: heroBorderRadius,
                 boxShadow: heroBoxShadow,
               }}
-              className="absolute inset-x-0 top-0 z-30 h-[100svh] overflow-hidden bg-black will-change-transform supports-[height:100dvh]:h-[100dvh]"
+              className="absolute inset-x-0 top-0 z-30 h-full overflow-hidden bg-black will-change-transform"
             >
               <Hero embedded />
             </motion.div>
