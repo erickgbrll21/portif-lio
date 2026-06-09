@@ -39,7 +39,7 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="relative mt-12 border-t border-white/5 bg-black px-6 py-16">
+    <footer className="relative mt-8 bg-black-light px-4 py-12 sm:mt-12 sm:px-6 sm:py-16">
       <div
         className="pointer-events-none absolute inset-x-0 -top-px mx-auto h-px max-w-3xl bg-gradient-to-r from-transparent via-violet-400/50 to-transparent"
         aria-hidden="true"

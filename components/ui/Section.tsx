@@ -1,60 +1,51 @@
-import { type ReactNode } from "react";
 import clsx from "clsx";
+import { type ReactNode } from "react";
+import { SectionHeader } from "./SectionHeader";
+
+export type SectionTone = "black" | "light";
 
 type Props = {
   id?: string;
-  eyebrow?: string;
-  title?: ReactNode;
-  description?: ReactNode;
+  index: string;
+  label: string;
+  title: string;
+  description?: string;
+  tone?: SectionTone;
   children: ReactNode;
   className?: string;
-  align?: "left" | "center";
+  contentClassName?: string;
 };
 
 export function Section({
   id,
-  eyebrow,
+  index,
+  label,
   title,
   description,
+  tone = "black",
   children,
   className,
-  align = "center",
+  contentClassName,
 }: Props) {
   return (
     <section
       id={id}
       className={clsx(
-        "relative w-full scroll-mt-24 bg-black px-6 py-28 md:py-36",
+        "relative w-full scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-28 lg:px-14 lg:py-36",
+        tone === "light" ? "bg-black-light" : "bg-black",
         className
       )}
     >
-      <div className="mx-auto max-w-6xl">
-        {(eyebrow || title || description) && (
-          <header
-            className={clsx(
-              "mb-16 flex flex-col gap-4",
-              align === "center" ? "items-center text-center" : "items-start"
-            )}
-          >
-            {eyebrow && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium tracking-wide text-neutral-300 uppercase">
-                <span className="size-1.5 rounded-full bg-violet-400 shadow-[0_0_12px_2px_rgba(167,139,250,0.7)]" />
-                {eyebrow}
-              </span>
-            )}
-            {title && (
-              <h2 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight text-gradient md:text-5xl">
-                {title}
-              </h2>
-            )}
-            {description && (
-              <p className="max-w-2xl text-pretty text-base text-neutral-400 md:text-lg">
-                {description}
-              </p>
-            )}
-          </header>
-        )}
-        {children}
+      <div className="mx-auto w-full max-w-[1400px]">
+        <SectionHeader
+          index={index}
+          label={label}
+          title={title}
+          description={description}
+        />
+        <div className={clsx("mt-12 md:mt-16", contentClassName)}>
+          {children}
+        </div>
       </div>
     </section>
   );

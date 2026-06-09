@@ -82,10 +82,10 @@ export function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 bg-black">
-        <div className="mx-auto flex h-16 w-full max-w-[1400px] items-center justify-between px-4 md:px-6 lg:px-10">
-          <a href="#top" className="flex items-center gap-3">
+        <div className="mx-auto flex h-14 w-full max-w-[1400px] items-center justify-between px-3 sm:h-16 sm:px-4 md:px-6 lg:px-10">
+          <a href="#top" className="flex min-w-0 items-center gap-2 sm:gap-3">
             <LogoMark />
-            <span className="text-sm font-bold tracking-[0.14em] text-white uppercase">
+            <span className="truncate text-xs font-bold tracking-[0.12em] text-white uppercase sm:text-sm sm:tracking-[0.14em]">
               Erick Gabriel
             </span>
           </a>

@@ -48,9 +48,11 @@ export function Process() {
   return (
     <Section
       id="processo"
-      eyebrow="Processo"
-      title={<>Um método claro do briefing ao deploy.</>}
+      index="06"
+      label="Processo"
+      title="Método"
       description="Seis etapas que tornam o projeto previsível, transparente e bem entregue."
+      tone="black"
     >
       <ol className="relative grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         <div
@@ -59,7 +61,7 @@ export function Process() {
         />
         {steps.map((s, i) => (
           <Reveal key={s.title} delay={i * 0.05}>
-            <li className="group glass relative h-full overflow-hidden rounded-3xl p-6 transition hover:-translate-y-1 hover:border-white/20">
+            <li className="group glass relative h-full overflow-hidden rounded-2xl p-5 transition hover:-translate-y-1 hover:border-white/20 sm:rounded-3xl sm:p-6">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">
                   Etapa {String(i + 1).padStart(2, "0")}

@@ -44,13 +44,16 @@ export function Testimonials() {
   return (
     <Section
       id="depoimentos"
-      eyebrow="Depoimentos"
-      title={<>O que dizem quem já trabalhou comigo.</>}
+      index="07"
+      label="Depoimentos"
+      title="Depoimentos"
       description="Confiança construída em cada projeto entregue."
+      tone="light"
+      contentClassName="mt-10 md:mt-12"
     >
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-black to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-black to-transparent" />
+      <div className="relative -mx-4 overflow-hidden sm:-mx-6">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-black to-transparent sm:w-24" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-black to-transparent sm:w-24" />
 
         <motion.div
           className="flex gap-5"
@@ -64,7 +67,7 @@ export function Testimonials() {
           {row.map((t, i) => (
             <figure
               key={`${t.name}-${i}`}
-              className="glass relative w-[340px] shrink-0 rounded-3xl p-6"
+              className="glass relative w-[min(88vw,340px)] shrink-0 rounded-2xl p-5 sm:rounded-3xl sm:p-6"
             >
               <Quote className="size-5 text-violet-300" />
               <blockquote className="mt-3 text-sm leading-relaxed text-neutral-300">

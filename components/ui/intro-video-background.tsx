@@ -80,14 +80,14 @@ export function IntroVideoBackground({ progress }: IntroVideoBackgroundProps) {
   }, [progress]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div className="absolute inset-0 overflow-hidden bg-black" aria-hidden="true">
       <video
         ref={videoRef}
         src={VIDEO_SRC}
         muted
         playsInline
         preload="auto"
-        className="absolute left-1/2 top-1/2 h-full min-h-full w-full min-w-full -translate-x-1/2 -translate-y-1/2 scale-[1.2] object-cover"
+        className="absolute left-1/2 top-1/2 h-full min-h-full w-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover object-center"
       />
     </div>
   );

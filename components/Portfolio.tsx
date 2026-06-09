@@ -1,7 +1,15 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { Reveal } from "./ui/Reveal";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "framer-motion";
+import { useEffect, useRef } from "react";
+import { Section } from "./ui/Section";
+import { SectionHeader } from "./ui/SectionHeader";
 
 type ProjectCard = {
   title: string;
@@ -151,7 +159,7 @@ function InnerGridCard({ title, detail }: ProjectCard) {
       <p className="text-[13px] font-medium leading-snug text-white md:text-sm">
         {title}
       </p>
-      <p className="mt-2 text-[11px] leading-relaxed text-white/90 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:text-xs">
+      <p className="mt-2 text-[11px] leading-relaxed text-white/90 opacity-100 transition-opacity duration-300 md:text-xs md:opacity-0 md:group-hover/card:opacity-100">
         {detail}
       </p>
       <div
@@ -201,11 +209,35 @@ function GalleryPreview({ project }: { project: Project }) {
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({
+  project,
+  compact = false,
+}: {
+  project: Project;
+  compact?: boolean;
+}) {
   return (
-    <article className="group/project relative w-[min(88vw,640px)] shrink-0 snap-start md:w-[min(58vw,680px)]">
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] md:rounded-3xl">
-        <div className="relative aspect-[16/11] overflow-hidden">
+    <article
+      className={
+        compact
+          ? "group/project relative flex h-full w-[min(84vw,520px)] shrink-0 md:w-[min(50vw,580px)]"
+          : "group/project relative w-[min(88vw,640px)] shrink-0 md:w-[min(58vw,680px)]"
+      }
+    >
+      <div
+        className={
+          compact
+            ? "flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] md:rounded-3xl"
+            : "overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] md:rounded-3xl"
+        }
+      >
+        <div
+          className={
+            compact
+              ? "relative min-h-0 flex-1 overflow-hidden"
+              : "relative aspect-[16/11] overflow-hidden"
+          }
+        >
           {project.variant === "grid" ? (
             <GridPreview project={project} />
           ) : (
@@ -260,11 +292,23 @@ function ProjectCard({ project }: { project: Project }) {
           )}
         </div>
 
-        <div className="flex items-center justify-between gap-4 border-t border-white/10 bg-black px-5 py-4 md:px-6 md:py-5">
-          <h3 className="text-base font-bold tracking-tight text-white transition-colors group-hover/project:text-violet-400 md:text-lg">
+        <div
+          className={
+            compact
+              ? "flex shrink-0 flex-col items-start gap-2 border-t border-white/10 bg-black px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 md:px-6"
+              : "flex flex-col items-start gap-2 border-t border-white/10 bg-black px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 sm:py-4 md:px-6 md:py-5"
+          }
+        >
+          <h3
+            className={
+              compact
+                ? "text-sm font-bold leading-tight tracking-tight text-white transition-colors group-hover/project:text-violet-400 sm:text-base"
+                : "text-sm font-bold tracking-tight text-white transition-colors group-hover/project:text-violet-400 sm:text-base md:text-lg"
+            }
+          >
             {project.name}
           </h3>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:gap-3">
             <span className="text-sm text-neutral-500">{project.year}</span>
             <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] text-neutral-300">
               {project.type}
@@ -276,44 +320,157 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-export function Portfolio() {
+/** Cada projeto ocupa 1 viewport de scroll antes de liberar a próxima seção. */
+const RUNWAY_VH_PER_PROJECT = 100;
+
+function smoothstep(t: number) {
+  return t * t * (3 - 2 * t);
+}
+
+function PortfolioTrack({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={compact ? "flex h-full w-max items-stretch gap-5 md:gap-6" : "flex w-max gap-5 md:gap-6"}>
+      {projects.map((project) => (
+        <ProjectCard key={project.id} project={project} compact={compact} />
+      ))}
+    </div>
+  );
+}
+
+function ScrollDrivenPortfolio() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const cardOffsetsRef = useRef<number[]>([0]);
+  const scrollProgress = useMotionValue(0);
+
+  const x = useTransform(scrollProgress, (p) => {
+    const offsets = cardOffsetsRef.current;
+    if (offsets.length <= 1) return 0;
+
+    const steps = offsets.length - 1;
+    const pos = p * steps;
+    const index = Math.min(Math.floor(pos), steps - 1);
+    const t = smoothstep(pos - index);
+    const from = offsets[index] ?? 0;
+    const to = offsets[Math.min(index + 1, steps)] ?? from;
+
+    return -(from + (to - from) * t);
+  });
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const container = containerRef.current;
+    const track = trackRef.current;
+    if (!section || !container || !track) return;
+
+    const measure = () => {
+      const articles = track.querySelectorAll("article");
+      const offsets = Array.from(articles).map(
+        (el) => (el as HTMLElement).offsetLeft
+      );
+      cardOffsetsRef.current = offsets.length > 0 ? offsets : [0];
+      scrollProgress.set(scrollProgress.get());
+    };
+
+    const updateProgress = () => {
+      const rect = section.getBoundingClientRect();
+      const scrollRange = section.offsetHeight - window.innerHeight;
+      if (scrollRange <= 0) {
+        scrollProgress.set(0);
+        return;
+      }
+
+      const progress = Math.min(Math.max(-rect.top / scrollRange, 0), 1);
+      scrollProgress.set(progress);
+    };
+
+    measure();
+    updateProgress();
+
+    const observer = new ResizeObserver(() => {
+      measure();
+      updateProgress();
+    });
+    observer.observe(track);
+    observer.observe(container);
+
+    const onLayoutChange = () => {
+      measure();
+      updateProgress();
+    };
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", onLayoutChange);
+    window.visualViewport?.addEventListener("resize", onLayoutChange);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", onLayoutChange);
+      window.visualViewport?.removeEventListener("resize", onLayoutChange);
+    };
+  }, [scrollProgress]);
+
+  const runwayHeight = `${projects.length * RUNWAY_VH_PER_PROJECT}svh`;
+
   return (
     <section
       id="portfolio"
-      className="relative w-full scroll-mt-24 bg-black px-6 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36"
+      ref={sectionRef}
+      className="relative scroll-mt-24 bg-black"
+      style={{ height: runwayHeight }}
+      aria-label="Portfólio"
     >
-      <div className="mx-auto w-full max-w-[1400px]">
-        <Reveal>
-          <p className="text-sm tracking-wide text-neutral-500">
-            <span className="font-medium text-violet-400">/02</span>{" "}
-            <span className="text-neutral-400">Projetos</span>
-          </p>
-        </Reveal>
-
-        <div className="mt-8 flex flex-col gap-6 lg:mt-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
-          <Reveal delay={0.05}>
-            <h2 className="text-[clamp(2.75rem,9vw,5.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.04em] text-white">
-              Portfólio
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="max-w-md text-sm leading-relaxed text-neutral-300 md:text-[0.95rem] md:leading-7 lg:pb-2">
-              Projetos que elevam percepção. Cada detalhe, interação e escolha
-              visual é pensado para posicionar no nível certo.
-            </p>
-          </Reveal>
-        </div>
-
-        <Reveal delay={0.15}>
-          <div className="portfolio-scroll mt-12 -mx-6 overflow-x-auto px-6 pb-2 md:-mx-10 md:mt-16 md:px-10 lg:-mx-14 lg:px-14">
-            <div className="flex w-max gap-5 md:gap-6">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </div>
+      <div className="sticky top-14 h-[calc(100svh-3.5rem)] sm:top-16 sm:h-[calc(100svh-4rem)] supports-[height:100dvh]:h-[calc(100dvh-3.5rem)] sm:supports-[height:100dvh]:h-[calc(100dvh-4rem)]">
+        <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col px-4 pt-5 pb-10 sm:px-6 sm:pb-12 md:px-10 lg:px-14">
+          <div className="shrink-0">
+            <SectionHeader
+              index="04"
+              label="Projetos"
+              title="Portfólio"
+              description="Projetos que elevam percepção. Cada detalhe, interação e escolha visual é pensado para posicionar no nível certo."
+              compact
+            />
           </div>
-        </Reveal>
+
+          <div
+            ref={containerRef}
+            className="mt-5 min-h-0 flex-1 overflow-x-clip md:mt-6"
+          >
+            <motion.div
+              ref={trackRef}
+              style={{ x }}
+              className="flex h-full w-max will-change-transform"
+            >
+              <PortfolioTrack compact />
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
+}
+
+export function Portfolio() {
+  const reducedMotion = useReducedMotion();
+
+  if (reducedMotion) {
+    return (
+      <Section
+        id="portfolio"
+        index="04"
+        label="Projetos"
+        title="Portfólio"
+        description="Projetos que elevam percepção. Cada detalhe, interação e escolha visual é pensado para posicionar no nível certo."
+        tone="black"
+      >
+        <div className="portfolio-scroll -mx-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 md:-mx-10 md:px-10 lg:-mx-14 lg:px-14">
+          <PortfolioTrack />
+        </div>
+      </Section>
+    );
+  }
+
+  return <ScrollDrivenPortfolio />;
 }

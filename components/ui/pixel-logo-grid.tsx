@@ -23,10 +23,12 @@ import {
   siTypescript,
 } from "simple-icons";
 import type { SimpleIcon } from "simple-icons";
+import { useReducedMotion } from "framer-motion";
 import {
   useCallback,
   useEffect,
   useRef,
+  useState,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -123,10 +125,12 @@ function PixelCanvas({
   colors,
   gap = 5,
   speed = 30,
+  active = false,
 }: {
   colors: string[];
   gap?: number;
   speed?: number;
+  active?: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -134,6 +138,8 @@ function PixelCanvas({
   const animationRef = useRef<number>(0);
   const lastFrameRef = useRef(performance.now());
   const reducedMotionRef = useRef(false);
+  const activeRef = useRef(active);
+  const hoveredRef = useRef(false);
 
   const init = useCallback(() => {
     const canvas = canvasRef.current;
@@ -196,6 +202,19 @@ function PixelCanvas({
     animationRef.current = requestAnimationFrame(loop);
   }, []);
 
+  const syncAnimation = useCallback(() => {
+    if (hoveredRef.current || activeRef.current) {
+      animate("appear");
+    } else {
+      animate("disappear");
+    }
+  }, [animate]);
+
+  useEffect(() => {
+    activeRef.current = active;
+    syncAnimation();
+  }, [active, syncAnimation]);
+
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     init();
@@ -204,8 +223,14 @@ function PixelCanvas({
     if (wrapRef.current) resizeObserver.observe(wrapRef.current);
 
     const card = wrapRef.current?.parentElement;
-    const handleEnter = () => animate("appear");
-    const handleLeave = () => animate("disappear");
+    const handleEnter = () => {
+      hoveredRef.current = true;
+      syncAnimation();
+    };
+    const handleLeave = () => {
+      hoveredRef.current = false;
+      syncAnimation();
+    };
     card?.addEventListener("mouseenter", handleEnter);
     card?.addEventListener("mouseleave", handleLeave);
 
@@ -215,7 +240,7 @@ function PixelCanvas({
       card?.removeEventListener("mouseenter", handleEnter);
       card?.removeEventListener("mouseleave", handleLeave);
     };
-  }, [init, animate]);
+  }, [init, syncAnimation]);
 
   return (
     <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
@@ -415,12 +440,35 @@ const STACK_LOGOS: Logo[] = [
   },
 ];
 
-function LogoCard({ logo }: { logo: Logo }) {
+/** Percorre cada célula de stack no sentido horário ao redor do centro. */
+const STACK_SCANNER_PATH: { row: number; col: number }[] = [
+  { row: 1, col: 1 },
+  { row: 1, col: 2 },
+  { row: 1, col: 3 },
+  { row: 1, col: 4 },
+  { row: 1, col: 5 },
+  { row: 2, col: 5 },
+  { row: 3, col: 5 },
+  { row: 4, col: 5 },
+  { row: 5, col: 5 },
+  { row: 5, col: 4 },
+  { row: 5, col: 3 },
+  { row: 5, col: 2 },
+  { row: 5, col: 1 },
+  { row: 4, col: 1 },
+  { row: 3, col: 1 },
+  { row: 2, col: 1 },
+];
+
+const SCANNER_INTERVAL_MS = 1300;
+
+function LogoCard({ logo, isActive = false }: { logo: Logo; isActive?: boolean }) {
   const { multicolor, brandColor, height, pixelColors, row, col, name, render } =
     logo;
 
   return (
     <div
+      data-stack-cell
       title={name}
       className={cn(
         "group relative grid place-items-center overflow-hidden cursor-pointer select-none isolate",
@@ -435,13 +483,14 @@ function LogoCard({ logo }: { logo: Logo }) {
         } as CSSProperties
       }
     >
-      <PixelCanvas colors={pixelColors} gap={5} speed={30} />
+      <PixelCanvas colors={pixelColors} gap={5} speed={30} active={isActive} />
       {render(
         cn(
           "relative z-[1] w-auto max-w-[58%] transition-all duration-300 group-hover:scale-[1.08]",
+          isActive && "scale-[1.08]",
           multicolor
-            ? "opacity-80 group-hover:opacity-100"
-            : "opacity-50 group-hover:opacity-100"
+            ? cn("opacity-80 group-hover:opacity-100", isActive && "opacity-100")
+            : cn("opacity-50 group-hover:opacity-100", isActive && "opacity-100")
         ),
         {
           height: `${height}px`,
@@ -462,29 +511,50 @@ export function PixelLogoGrid({
   badge = "Stack",
   heading = "Tecnologias que uso para entregar produtos de alto nível",
 }: PixelLogoGridProps) {
+  const [scannerIndex, setScannerIndex] = useState(0);
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (reducedMotion) return;
+
+    const id = window.setInterval(() => {
+      setScannerIndex((current) => (current + 1) % STACK_SCANNER_PATH.length);
+    }, SCANNER_INTERVAL_MS);
+
+    return () => window.clearInterval(id);
+  }, [reducedMotion]);
+
+  const activeCell = STACK_SCANNER_PATH[scannerIndex];
+
   return (
-    <div className="relative mx-auto w-full max-w-5xl overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div
-        className="mx-auto grid w-full min-w-[560px] max-w-[960px] grid-cols-5 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10"
-        style={{ gridTemplateRows: "repeat(5, 84px)" }}
-      >
+    <div className="relative mx-auto w-full max-w-5xl">
+      <div className="relative mx-auto grid w-full max-w-[960px] grid-cols-5 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:rounded-3xl [grid-template-rows:repeat(5,minmax(52px,1fr))] sm:[grid-template-rows:repeat(5,minmax(68px,1fr))] md:[grid-template-rows:repeat(5,84px)]">
         {STACK_LOGOS.map((logo) => (
-          <LogoCard key={logo.name} logo={logo} />
+          <LogoCard
+            key={logo.name}
+            logo={logo}
+            isActive={
+              !reducedMotion &&
+              activeCell?.row === logo.row &&
+              activeCell?.col === logo.col
+            }
+          />
         ))}
 
         <div
-          className="flex flex-col items-center justify-center gap-3 bg-[#06070c] px-4"
+          className="flex flex-col items-center justify-center gap-2 bg-[#06070c] px-2 py-3 sm:gap-3 sm:px-4 sm:py-0"
           style={{ gridColumn: "2 / span 3", gridRow: "2 / span 3" }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium tracking-wide text-neutral-300 uppercase">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-[10px] font-medium tracking-wide text-neutral-300 uppercase sm:gap-2 sm:px-3 sm:py-1 sm:text-xs">
             <span className="size-1.5 rounded-full bg-violet-400 shadow-[0_0_12px_2px_rgba(167,139,250,0.7)]" />
             {badge}
           </span>
-          <h3 className="max-w-[420px] text-center text-balance text-lg font-semibold leading-tight tracking-tight text-gradient md:text-2xl">
+          <h3 className="max-w-[420px] text-center text-balance text-sm font-semibold leading-snug tracking-tight text-gradient sm:text-lg sm:leading-tight md:text-2xl">
             {heading}
           </h3>
-          <p className="max-w-sm text-center text-sm text-zinc-500">
-            Passe o mouse sobre cada tecnologia para ver o efeito pixel.
+          <p className="hidden max-w-sm text-center text-sm text-zinc-500 sm:block">
+            A animação percorre cada tecnologia automaticamente — passe o mouse
+            para ativar de novo.
           </p>
         </div>
       </div>

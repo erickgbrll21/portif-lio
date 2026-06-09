@@ -21,13 +21,15 @@ export function Contact() {
   return (
     <Section
       id="contato"
-      eyebrow="Contato"
-      title={<>Vamos conversar sobre o seu próximo projeto.</>}
+      index="08"
+      label="Contato"
+      title="Contato"
       description="Responda em até 24h úteis. Conte-me sobre sua ideia, escopo e objetivo."
+      tone="black"
     >
       <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
         <Reveal>
-          <div className="glass relative h-full overflow-hidden rounded-3xl p-8">
+          <div className="glass relative h-full overflow-hidden rounded-2xl p-5 sm:rounded-3xl sm:p-8">
             <div
               className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-violet-500/30 blur-3xl"
               aria-hidden="true"
@@ -52,7 +54,9 @@ export function Contact() {
                   <div className="text-[10px] uppercase tracking-[0.25em] text-neutral-500">
                     E-mail
                   </div>
-                  <div className="text-white">contato@erickgabriel.dev</div>
+                  <div className="break-all text-white sm:break-normal">
+                    contato@erickgabriel.dev
+                  </div>
                 </div>
               </a>
 
@@ -79,7 +83,7 @@ export function Contact() {
         <Reveal delay={0.1}>
           <form
             onSubmit={onSubmit}
-            className="glass relative grid gap-4 rounded-3xl p-8"
+            className="glass relative grid gap-4 rounded-2xl p-5 sm:rounded-3xl sm:p-8"
           >
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Nome" name="name" placeholder="Seu nome" required />

@@ -28,14 +28,16 @@ export function Differentials() {
   return (
     <Section
       id="diferenciais"
-      eyebrow="Diferenciais"
-      title={<>Por que trabalhar comigo é diferente.</>}
+      index="03"
+      label="Diferenciais"
+      title="Diferenciais"
       description="O nível técnico e o cuidado visual que separam um site bom de um produto memorável."
+      tone="light"
     >
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/5 md:grid-cols-4">
         {items.map((it, i) => (
           <Reveal key={it.title} delay={i * 0.04}>
-            <div className="group relative h-full bg-black p-6 transition hover:bg-[#0a0a0a]">
+            <div className="group relative h-full bg-black p-4 transition hover:bg-[#0a0a0a] sm:p-5 md:p-6">
               <div
                 className="absolute inset-0 opacity-0 transition group-hover:opacity-100"
                 style={{
@@ -45,7 +47,7 @@ export function Differentials() {
                 aria-hidden="true"
               />
               <it.icon className="relative size-5 text-cyan-300" />
-              <h3 className="relative mt-4 text-sm font-semibold text-white">
+              <h3 className="relative mt-3 text-xs font-semibold leading-snug text-white sm:mt-4 sm:text-sm">
                 {it.title}
               </h3>
               <p className="relative mt-1 text-xs leading-relaxed text-neutral-400">

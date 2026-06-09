@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
 import { useState } from "react";
 import { Reveal } from "./ui/Reveal";
+import { Section } from "./ui/Section";
 
 type Service = {
   title: string;
@@ -115,34 +116,16 @@ export function Services() {
   };
 
   return (
-    <section
+    <Section
       id="servicos"
-      className="relative w-full scroll-mt-24 bg-black px-6 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36"
+      index="02"
+      label="Serviços"
+      title="Soluções"
+      description="Não é sobre volume, é sobre nível. Marcas, sites e criativos desenvolvidos com critério, estética e intenção."
+      tone="black"
     >
-      <div className="mx-auto w-full max-w-[1400px]">
-        <Reveal>
-          <p className="text-sm tracking-wide text-neutral-500">
-            <span className="font-medium text-violet-400">/03</span>{" "}
-            <span className="text-neutral-400">Serviços</span>
-          </p>
-        </Reveal>
-
-        <div className="mt-8 flex flex-col gap-6 lg:mt-10 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
-          <Reveal delay={0.05}>
-            <h2 className="text-[clamp(2.75rem,9vw,5.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.04em] text-white">
-              Soluções
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="max-w-md text-sm leading-relaxed text-neutral-400 md:text-[0.95rem] md:leading-7 lg:pb-2 lg:text-right">
-              Não é sobre volume, é sobre nível. Marcas, sites e criativos
-              desenvolvidos com critério, estética e intenção.
-            </p>
-          </Reveal>
-        </div>
-
-        <Reveal delay={0.15}>
-          <ul className="mt-12 border-t border-white/10 md:mt-16">
+      <Reveal delay={0.15}>
+        <ul className="border-t border-white/10">
             {services.map((service, index) => {
               const isOpen = openIndex === index;
 
@@ -153,7 +136,7 @@ export function Services() {
                     onClick={() => toggle(index)}
                     aria-expanded={isOpen}
                     className={clsx(
-                      "group flex w-full items-center gap-5 py-6 text-left transition-colors duration-200 md:gap-8 md:py-7",
+                      "group flex w-full items-center gap-3 py-5 text-left transition-colors duration-200 sm:gap-5 sm:py-6 md:gap-8 md:py-7",
                       !isOpen && "hover:bg-white/[0.02]"
                     )}
                   >
@@ -170,7 +153,7 @@ export function Services() {
 
                     <span
                       className={clsx(
-                        "flex-1 text-base transition-colors duration-200 md:text-lg",
+                        "flex-1 text-pretty text-sm transition-colors duration-200 sm:text-base md:text-lg",
                         isOpen
                           ? "font-medium text-white"
                           : "text-neutral-400 group-hover:text-white"
@@ -235,9 +218,8 @@ export function Services() {
                 </li>
               );
             })}
-          </ul>
-        </Reveal>
-      </div>
-    </section>
+        </ul>
+      </Reveal>
+    </Section>
   );
 }

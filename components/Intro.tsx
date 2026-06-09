@@ -4,23 +4,36 @@ import {
   motion,
   useMotionTemplate,
   useMotionValue,
+  useReducedMotion,
   useTransform,
 } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Hero } from "@/components/Hero";
 import { IntroVideoBackground } from "@/components/ui/intro-video-background";
 
 const HEADLINE = "Explore sua nova experiência digital.";
-const SCROLL_RUNWAY = "250vh";
+
+// Duas fases dentro da Intro:
+//   [0 .. VIDEO_END]        -> scroll controla todos os frames do vídeo
+//   [HERO_START .. HERO_END] -> Hero sobe como cortina sobre o último frame
+const VIDEO_END = 0.78;
+const HERO_START = 0.82;
+const HERO_END = 1;
 
 export function Intro() {
+  const reducedMotion = useReducedMotion();
   const scrollRef = useRef<HTMLElement>(null);
   const scrollProgress = useMotionValue(0);
+  const videoProgress = useMotionValue(0);
+  const [motionReady, setMotionReady] = useState(false);
+
+  useEffect(() => {
+    setMotionReady(true);
+  }, []);
 
   useEffect(() => {
     const section = scrollRef.current;
     if (!section) return;
-
-    let lastProgress = -1;
 
     const updateProgress = () => {
       const rect = section.getBoundingClientRect();
@@ -28,69 +41,100 @@ export function Intro() {
       if (scrollRange <= 0) return;
 
       const progress = Math.min(Math.max(-rect.top / scrollRange, 0), 1);
-      if (Math.abs(progress - lastProgress) < 0.003) return;
-
-      lastProgress = progress;
       scrollProgress.set(progress);
+      videoProgress.set(Math.min(progress / VIDEO_END, 1));
     };
 
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("resize", updateProgress);
+    window.visualViewport?.addEventListener("resize", updateProgress);
 
     return () => {
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("resize", updateProgress);
+      window.visualViewport?.removeEventListener("resize", updateProgress);
     };
-  }, [scrollProgress]);
+  }, [scrollProgress, videoProgress]);
 
-  const textY = useTransform(scrollProgress, [0, 1], ["0%", "-18%"]);
-  const textOpacity = useTransform(scrollProgress, [0, 0.55, 1], [1, 0.88, 0]);
-  const overlayOpacity = useTransform(scrollProgress, [0, 0.75, 1], [1, 0.65, 0]);
-  const exitBlur = useTransform(scrollProgress, [0.72, 1], [0, 22]);
-  const exitFilter = useMotionTemplate`blur(${exitBlur}px)`;
+  const textOpacity = useTransform(
+    scrollProgress,
+    [0, VIDEO_END * 0.5, VIDEO_END],
+    [1, 0.85, 0]
+  );
+  const textY = useTransform(scrollProgress, [0, VIDEO_END], ["0%", "-12%"]);
+  const videoBlur = useTransform(scrollProgress, [HERO_START, HERO_END], [0, 18]);
+  const videoFilter = useMotionTemplate`blur(${videoBlur}px)`;
+
+  const heroSlideY = useTransform(
+    scrollProgress,
+    [HERO_START, HERO_END],
+    ["100%", "0%"]
+  );
+  const heroRadius = useTransform(
+    scrollProgress,
+    [HERO_START, HERO_END],
+    [28, 0]
+  );
+  const heroShadow = useTransform(
+    scrollProgress,
+    [HERO_START, HERO_END],
+    [0.7, 0]
+  );
+  const heroBorderRadius = useMotionTemplate`${heroRadius}px ${heroRadius}px 0 0`;
+  const heroBoxShadow = useMotionTemplate`0 -32px 80px rgba(0,0,0,${heroShadow})`;
+
+  const showCurtainHero = motionReady && !reducedMotion;
 
   return (
-    <section
-      id="top"
-      ref={scrollRef}
-      className="relative scroll-mt-24"
-      style={{ height: SCROLL_RUNWAY }}
-      aria-label="Abertura"
-    >
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <motion.div
-          className="absolute inset-0 will-change-[filter]"
-          style={{ filter: exitFilter }}
-        >
-          <IntroVideoBackground progress={scrollProgress} />
-        </motion.div>
+    <>
+      <section
+        id="top"
+        ref={scrollRef}
+        className="relative scroll-mt-24 [--intro-runway:320svh] sm:[--intro-runway:310svh] md:[--intro-runway:350svh] xl:[--intro-runway:360svh] 2xl:[--intro-runway:340svh]"
+        style={{
+          height: motionReady && reducedMotion ? "100svh" : "var(--intro-runway)",
+        }}
+        aria-label="Abertura"
+      >
+        <div className="sticky top-0 h-[100svh] overflow-hidden supports-[height:100dvh]:h-[100dvh]">
+          <motion.div
+            className="absolute inset-0 will-change-[filter]"
+            style={{ filter: videoFilter }}
+          >
+            <IntroVideoBackground progress={videoProgress} />
+          </motion.div>
 
-        <motion.div
-          style={{ opacity: overlayOpacity }}
-          className="pointer-events-none absolute inset-0 z-[1] bg-black/40"
-          aria-hidden="true"
-        />
-        <motion.div
-          style={{ opacity: overlayOpacity }}
-          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-transparent to-black/50"
-          aria-hidden="true"
-        />
+          <motion.div
+            style={{ y: textY, opacity: textOpacity }}
+            className="relative z-10 flex h-full items-center justify-center px-4 pt-20 text-center will-change-transform sm:px-6 md:pt-24"
+          >
+            <div className="max-w-[18rem] sm:max-w-none">
+              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 sm:mb-4 sm:text-xs sm:tracking-[0.3em]">
+                Erick Gabriel · Studio
+              </p>
+              <h1 className="text-balance text-xl font-medium tracking-tight sm:text-2xl md:text-4xl">
+                <span className="text-gradient">{HEADLINE}</span>
+              </h1>
+            </div>
+          </motion.div>
 
-        <motion.div
-          style={{ y: textY, opacity: textOpacity }}
-          className="relative z-10 flex h-full items-center justify-center px-6 pt-20 text-center will-change-transform md:pt-24"
-        >
-          <div>
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-zinc-400">
-              Erick Gabriel · Studio
-            </p>
-            <h1 className="text-balance text-2xl font-medium tracking-tight md:text-4xl">
-              <span className="text-gradient">{HEADLINE}</span>
-            </h1>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+          {showCurtainHero && (
+            <motion.div
+              style={{
+                y: heroSlideY,
+                borderRadius: heroBorderRadius,
+                boxShadow: heroBoxShadow,
+              }}
+              className="absolute inset-x-0 top-0 z-30 h-[100svh] overflow-hidden bg-black will-change-transform supports-[height:100dvh]:h-[100dvh]"
+            >
+              <Hero embedded />
+            </motion.div>
+          )}
+        </div>
+      </section>
+
+      {motionReady && reducedMotion && <Hero />}
+    </>
   );
 }

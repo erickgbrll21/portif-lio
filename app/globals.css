@@ -2,6 +2,8 @@
 
 :root {
   --background: #000000;
+  --black: #000000;
+  --black-light: #262626;
   --foreground: #ffffff;
   --muted: #a3a3a3;
   --muted-foreground: #737373;
@@ -11,6 +13,7 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-black-light: var(--black-light);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
