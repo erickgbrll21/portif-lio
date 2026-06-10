@@ -26,38 +26,6 @@ const contactLinks = [
   },
 ];
 
-function LogoMark() {
-  return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      <rect
-        x="1"
-        y="1"
-        width="26"
-        height="26"
-        rx="6"
-        stroke="white"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M9 8.5H17M9 8.5V19.5M9 13.5H15"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="21" cy="8" r="2" fill="#22d3ee" />
-    </svg>
-  );
-}
-
 function FooterColumn({
   title,
   children,
@@ -117,11 +85,11 @@ export function Footer() {
     <footer className="bg-black px-4 py-14 sm:px-6 sm:py-16 md:px-10 lg:px-14">
       <div className="mx-auto grid max-w-[1400px] gap-12 lg:grid-cols-[1.35fr_1fr_1fr_1fr] lg:gap-10">
         <div>
-          <Link href="/" className="inline-flex items-center gap-3">
-            <LogoMark />
-            <span className="text-sm font-bold tracking-[0.14em] text-white uppercase">
-              Erick Gabriel
-            </span>
+          <Link
+            href="/"
+            className="text-sm font-bold tracking-[0.14em] text-white uppercase"
+          >
+            Erick Gabriel
           </Link>
 
           <p className="mt-8 max-w-sm text-lg leading-snug text-white">
