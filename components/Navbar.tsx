@@ -13,11 +13,17 @@ const menuLinks = [
 ];
 
 const socialLinks = [
-  { href: "https://instagram.com/", label: "Instagram" },
-  { href: "https://linkedin.com/", label: "LinkedIn" },
+  {
+    href: "https://www.instagram.com/_erickgabriel10?igsh=MTkwZXNrZnNwYmt2cw%3D%3D&utm_source=qr",
+    label: "Instagram",
+  },
+  {
+    href: "https://www.linkedin.com/in/erickgbrl10/",
+    label: "LinkedIn",
+  },
 ];
 
-const EMAIL = "contato@erickgabriel.dev";
+const EMAIL = "erickgbrl10@gmail.com";
 
 function MenuIndex({ index, muted }: { index: number; muted?: boolean }) {
   return (

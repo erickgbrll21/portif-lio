@@ -10,9 +10,14 @@ const navLinks = [
 ];
 
 const socialLinks = [
-  { href: "https://instagram.com/", label: "Instagram" },
-  { href: "https://linkedin.com/", label: "LinkedIn" },
-  { href: "https://github.com/erickgbrll21", label: "GitHub" },
+  {
+    href: "https://www.instagram.com/_erickgabriel10?igsh=MTkwZXNrZnNwYmt2cw%3D%3D&utm_source=qr",
+    label: "Instagram",
+  },
+  {
+    href: "https://www.linkedin.com/in/erickgbrl10/",
+    label: "LinkedIn",
+  },
 ];
 
 const contactLinks = [
@@ -21,8 +26,8 @@ const contactLinks = [
     label: "+55 (31) 99723-8789",
   },
   {
-    href: "mailto:contato@erickgabriel.dev",
-    label: "contato@erickgabriel.dev",
+    href: "mailto:erickgbrl10@gmail.com",
+    label: "erickgbrl10@gmail.com",
   },
 ];
 
