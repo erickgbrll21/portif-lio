@@ -5,11 +5,11 @@ import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const menuLinks = [
-  { href: "#top", label: "Início", muted: false },
-  { href: "#contato", label: "Contato", muted: false },
-  { href: "#portfolio", label: "Projetos", muted: false },
-  { href: "#servicos", label: "Soluções", muted: false },
-  { href: "#sobre", label: "Sobre", muted: true },
+  { href: "/", label: "Início", muted: false },
+  { href: "/contato", label: "Contato", muted: false },
+  { href: "/#portfolio", label: "Projetos", muted: false },
+  { href: "/#servicos", label: "Soluções", muted: false },
+  { href: "/#sobre", label: "Sobre", muted: true },
 ];
 
 const socialLinks = [
@@ -83,7 +83,7 @@ export function Navbar() {
     <>
       <header className="fixed inset-x-0 top-0 z-50 bg-black">
         <div className="mx-auto flex h-14 w-full max-w-[1400px] items-center justify-between px-3 sm:h-16 sm:px-4 md:px-6 lg:px-10">
-          <a href="#top" className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <a href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
             <LogoMark />
             <span className="truncate text-xs font-bold tracking-[0.12em] text-white uppercase sm:text-sm sm:tracking-[0.14em]">
               Erick Gabriel
@@ -102,7 +102,7 @@ export function Navbar() {
             </div>
 
             <a
-              href="#contato"
+              href="/contato"
               className="hidden rounded-lg border border-white/90 px-4 py-2 text-sm text-white transition hover:bg-white/5 sm:inline-flex"
             >
               Vamos conversar?

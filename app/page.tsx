@@ -6,8 +6,7 @@ import { Differentials } from "@/components/Differentials";
 import { Portfolio } from "@/components/Portfolio";
 import { Stack } from "@/components/Stack";
 import { Process } from "@/components/Process";
-import { Testimonials } from "@/components/Testimonials";
-import { Contact } from "@/components/Contact";
+import { ContactCta } from "@/components/ContactCta";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -22,8 +21,7 @@ export default function Home() {
         <Portfolio />
         <Stack />
         <Process />
-        <Testimonials />
-        <Contact />
+        <ContactCta />
       </main>
       <Footer />
     </>
